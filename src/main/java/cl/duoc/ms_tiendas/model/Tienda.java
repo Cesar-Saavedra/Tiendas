@@ -52,5 +52,6 @@ public class Tienda {
     // ID del usuario dueno de la tienda (viene de ms-login)
     // No es una FK real porque esta en otro microservicio y otra BD
     @Column(nullable = false)
-    private Long idUsuarioDueno;
+    private Long idUsuarioDueno; //Long aguanta que int o long
+
 }
