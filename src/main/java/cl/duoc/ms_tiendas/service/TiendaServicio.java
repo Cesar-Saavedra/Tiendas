@@ -6,8 +6,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import cl.duoc.ms_tiendas.clientes.LoginCliente;
+import cl.duoc.ms_tiendas.dto.MetricaResponse;
 import cl.duoc.ms_tiendas.dto.TiendaRequest;
 import cl.duoc.ms_tiendas.dto.TiendaResponse;
+import cl.duoc.ms_tiendas.dto.TiendaResumenDTO;
 import cl.duoc.ms_tiendas.dto.UsuarioDTO;
 import cl.duoc.ms_tiendas.model.EstadoTienda;
 import cl.duoc.ms_tiendas.model.MetricaTienda;
