@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.query.sqm.tree.expression.Conversion;
 import org.springframework.stereotype.Service;
 
+import cl.duoc.cliente.LoginCliente;
 import cl.duoc.ms_tiendas.dto.TiendaRequest;
 import cl.duoc.ms_tiendas.dto.TiendaResponse;
 import cl.duoc.ms_tiendas.dto.UsuarioDto;
@@ -15,18 +15,19 @@ import cl.duoc.ms_tiendas.model.MetricaTienda;
 import cl.duoc.ms_tiendas.model.Tienda;
 import cl.duoc.ms_tiendas.repository.MetricaTiendaRepository;
 import cl.duoc.ms_tiendas.repository.TiendaRepository;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Service
+@NoArgsConstructor  
 @AllArgsConstructor
-@NoArgsConstructor
 public class TiendaService {
 
-    private final TiendaRepository tiendarepo;
+    private  TiendaRepository tiendarepo;
 
-    private final MetricaTiendaRepository metricatiendarepo;
+    private  MetricaTiendaRepository metricatiendarepo;
 
-    private final LoginCliente loginCliente;
+    private  LoginCliente loginCliente;
 
 
 

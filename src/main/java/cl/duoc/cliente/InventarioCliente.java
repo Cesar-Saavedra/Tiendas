@@ -2,21 +2,27 @@ package cl.duoc.cliente;
 
 // Cliente HTTP que se comunica con ms-inventario
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import cl.duoc.ms_tiendas.dto.InventarioResumenDto;
 import lombok.*;
 
-// Consulta cuantos productos activos tiene una tienda para mostrar en el perfil
+
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
 public class InventarioCliente {
 
-    private final RestTemplate restTemplate;
+    private Final RestTemplate restTemplate;
 
     // URL base de ms-inventario, configurada en application.properties
-    @Value("${ms-inventario.url}")
+    @Autowired ("${ms-inventario.url}")
     private String urlMsInventario;
 
     // ----------------------------------------------------------------
@@ -33,11 +39,11 @@ public class InventarioCliente {
 
             HttpEntity<Void> peticion = new HttpEntity<>(headers);
 
-            ResponseEntity<InventarioResumenDTO> respuesta = restTemplate.exchange(
+            ResponseEntity<InventarioResumenDto> respuesta = restTemplate.exchange(
                     url,
                     HttpMethod.GET,
                     peticion,
-                    InventarioResumenDTO.class
+                    InventarioResumenDto.class
             );
 
             return respuesta.getBody();
