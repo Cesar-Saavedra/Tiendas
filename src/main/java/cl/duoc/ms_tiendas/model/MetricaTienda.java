@@ -34,6 +34,6 @@ public class MetricaTienda {
     private Integer totalFavoritos = 0;
 
     @Column(nullable=false)
-    private Integer totalEventas = 0;
+    private Integer totalEventos = 0;
 
 }
