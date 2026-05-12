@@ -22,7 +22,7 @@ public class Tienda {
     // Identificador unico autoincremental
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
 
     // Nombre comercial de la tienda
     @Column(nullable = false, length = 150)
@@ -52,6 +52,6 @@ public class Tienda {
     // ID del usuario dueno de la tienda (viene de ms-login)
     // No es una FK real porque esta en otro microservicio y otra BD
     @Column(nullable = false)
-    private Long idUsuarioDueno; //Long aguanta que int o long
+    private Long idUsuarioDueno; //Long aguanta mas que int o long
 
 }

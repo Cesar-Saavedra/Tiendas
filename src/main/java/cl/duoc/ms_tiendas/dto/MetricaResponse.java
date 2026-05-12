@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class MetricaResponse {
     
     // ID de la tienda a la que pertenecen estas metricas
-    private Long idTienda;
+    private Integer idTienda;
     private String nombreTienda;
 
     // Metricas principales

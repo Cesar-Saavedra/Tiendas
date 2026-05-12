@@ -1,5 +1,7 @@
 package cl.duoc.ms_tiendas.dto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
@@ -8,7 +10,7 @@ import lombok.*;
 public class LocalizacionDTO {
 
         // ID de la localizacion en ms-localizacion
-    private String id;
+    private Integer id;
 
     // ID de la tienda a la que pertenece esta localizacion
     private Long idTienda;

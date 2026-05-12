@@ -1,5 +1,7 @@
 package cl.duoc.ms_tiendas.dto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -7,7 +9,7 @@ import lombok.*;
 public class InventarioResumenDTO {
 
     // ID de la tienda duena de este inventario
-    private Long idTienda;
+    private Integer idTienda;
 
     // Cantidad total de productos con stock mayor a 0
     private Integer totalProductosActivos;

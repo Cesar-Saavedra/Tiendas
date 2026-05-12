@@ -21,7 +21,7 @@ public class MetricaTienda {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private String id;
+    private Integer id;
 
     @OneToOne
     @JoinColumn(name = "id_tienda", nullable=false)
