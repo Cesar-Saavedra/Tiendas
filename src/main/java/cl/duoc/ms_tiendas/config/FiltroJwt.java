@@ -1,32 +1,28 @@
 package cl.duoc.ms_tiendas.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.security.Key;
 import java.util.List;
 
 @Component
-public class FiltroJwt OncePerRequestFilter{
+public class FiltroJwt extends OncePerRequestFilter{
 
 // La misma clave secreta que usa ms-login para firmar los tokens
     // Debe ser IDENTICA en todos los microservicios (esta en application.properties)
     @Value("${jwt.secret}")
     private String secreto;
 
-    
+    @Override
     protected void doFilterInternal(HttpServletRequest peticion,
                                     HttpServletResponse respuesta,
                                     FilterChain cadenaFiltros)
@@ -47,11 +43,7 @@ public class FiltroJwt OncePerRequestFilter{
         try {
             // Validar y decodificar el token con la clave secreta compartida
             Key clave = Keys.hmacShaKeyFor(secreto.getBytes());
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(clave)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+            Claims claims = Jwts.parser().verifyWith(clave).build().parseClaimsJws(token);
 
             // Extraer datos del usuario desde el payload del token
             String email     = claims.getSubject();

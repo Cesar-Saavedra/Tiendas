@@ -10,6 +10,6 @@ import cl.duoc.ms_tiendas.model.Tienda;
 
 public interface  MetricaTiendaRepositorio extends JpaRepository<MetricaTienda, Long> {
 
-    Optional<MetricaTienda> findByIdTienda(Tienda tienda);
+    Optional<MetricaTienda> findByTienda(Tienda tienda);
 
 }
