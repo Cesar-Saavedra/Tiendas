@@ -11,10 +11,12 @@ import org.springframework.web.client.RestTemplate;
 import cl.duoc.ms_tiendas.dto.UsuarioDTO;
 import lombok.RequiredArgsConstructor;
 
+
 @Component
 @RequiredArgsConstructor
-public class LoginCliente {
 
+public class LoginCliente {
+    
     // RestTemplate es el objeto que hace las peticiones HTTP
     // Se configura como Bean en ConfiguracionSeguridad
     private final RestTemplate restTemplate;

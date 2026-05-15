@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,7 +85,7 @@ public class TiendaControlador {
     public ResponseEntity<TiendaResponse> crearTienda(
             @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
-            @RequestHeader("X-Usuario-Id") Long idUsuarioDueno) {
+            @RequestAttribute("X-Usuario-Id") Long idUsuarioDueno) {
 
         TiendaResponse tiendaCreada = tiendaServicio.crearTienda(solicitud, idUsuarioDueno, tokenJwt);
         // 201 Created en lugar de 200 OK porque estamos creando un recurso nuevo
@@ -103,7 +104,7 @@ public class TiendaControlador {
             @PathVariable Long id,
             @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
-            @RequestHeader("X-Usuario-Id") Long idUsuarioDueno) {
+            @RequestAttribute("X-Usuario-Id") Long idUsuarioDueno) {
 
         TiendaResponse tiendaActualizada = tiendaServicio.actualizarTienda(id, solicitud, idUsuarioDueno, tokenJwt);
         return ResponseEntity.ok(tiendaActualizada);
@@ -158,7 +159,7 @@ public class TiendaControlador {
     @GetMapping("/{id}/metricas")
     public ResponseEntity<MetricaResponse> obtenerMetricas(
             @PathVariable Long id,
-            @RequestHeader("X-Usuario-Id") Long idUsuarioDueno) {
+            @RequestAttribute("X-Usuario-Id") Long idUsuarioDueno) {
 
         MetricaResponse metricas = tiendaServicio.obtenerMetricas(id, idUsuarioDueno);
         return ResponseEntity.ok(metricas);

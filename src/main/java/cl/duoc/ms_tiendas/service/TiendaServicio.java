@@ -36,6 +36,7 @@ public class TiendaServicio {
     // Crea una nueva tienda para un usuario autenticado
     // El idUsuarioDueno viene del token JWT, no del body del formulario
     // ----------------------------------------------------------------
+    
     public TiendaResponse crearTienda(TiendaRequest solicitud, Long idUsuarioDueno, String tokenJwt) {
 
         // Verificar que el usuario no tenga ya una tienda con el mismo nombre
