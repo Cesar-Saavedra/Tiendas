@@ -3,6 +3,7 @@ package cl.duoc.ms_tiendas.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // <-- ¡NUEVO IMPORT!
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ConfiguracionSeguridad {
 
- private final FiltroJwt filtroJwt;
+    private final FiltroJwt filtroJwt;
 
     @Bean
     public SecurityFilterChain configurarSeguridad(HttpSecurity http) throws Exception {
@@ -24,7 +25,10 @@ public class ConfiguracionSeguridad {
             .sessionManagement(sesion ->
                 sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Todos los endpoints requieren token JWT valido
+                // ¡AQUÍ ESTÁ LA MAGIA! Permitimos que cualquiera consulte (GET) las tiendas
+                .requestMatchers(HttpMethod.GET, "/api/tiendas/**").permitAll()
+                
+                // Todos los demas endpoints requieren token JWT valido
                 .anyRequest().authenticated()
             )
             .addFilterBefore(filtroJwt, UsernamePasswordAuthenticationFilter.class);
@@ -38,22 +42,4 @@ public class ConfiguracionSeguridad {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
