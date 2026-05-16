@@ -20,8 +20,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Component
@@ -51,9 +49,14 @@ public class FiltroJwt extends OncePerRequestFilter{
         String token = headerAutorizacion.substring(7);
 
         try {
-            // Validar y decodificar el token con la clave secreta compartida
-            Key clave = Keys.hmacShaKeyFor(secreto.getBytes());
-            Claims claims = Jwts.parser().verifyWith(clave).build().parseClaimsJws(token);
+            // Validar y decodificar el token (Sintaxis JJWT 0.11.x)
+            java.security.Key clave = Keys.hmacShaKeyFor(secreto.getBytes());
+            
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(clave)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
             // Extraer datos del usuario desde el payload del token
             String email     = claims.getSubject();
