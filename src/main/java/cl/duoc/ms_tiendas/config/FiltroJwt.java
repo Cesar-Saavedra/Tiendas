@@ -12,21 +12,30 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.security.Key;
 import java.util.List;
 
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class FiltroJwt extends OncePerRequestFilter{
+public class FiltroJwt extends OncePerRequestFilter {
 
-// La misma clave secreta que usa ms-login para firmar los tokens
-    // Debe ser IDENTICA en todos los microservicios (esta en application.properties)
+    // El mismo secret que usa ms-login para firmar los tokens
     @Value("${jwt.secret}")
     private String secreto;
 
@@ -36,51 +45,53 @@ public class FiltroJwt extends OncePerRequestFilter{
                                     FilterChain cadenaFiltros)
             throws ServletException, IOException {
 
-        // Leer el header Authorization del request entrante
         String headerAutorizacion = peticion.getHeader("Authorization");
 
-        // Si no trae token, dejar pasar y Spring Security rechazara el request
+        // Si no trae token, dejar pasar (Spring Security lo rechazara solo)
         if (headerAutorizacion == null || !headerAutorizacion.startsWith("Bearer ")) {
             cadenaFiltros.doFilter(peticion, respuesta);
             return;
         }
 
-        // Quitar el prefijo "Bearer " para quedarnos solo con el token
         String token = headerAutorizacion.substring(7);
 
         try {
-            // Validar y decodificar el token (Sintaxis JJWT 0.11.x)
-            java.security.Key clave = Keys.hmacShaKeyFor(secreto.getBytes());
-            
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(clave)
+            // CAMBIO: API de jjwt 0.12.x
+            // Antes (0.11.x): Jwts.parserBuilder().setSigningKey(clave).build()
+            // Ahora (0.12.x): Jwts.parser().verifyWith(clave).build()
+            SecretKey clave = Keys.hmacShaKeyFor(secreto.getBytes());
+
+            Claims claims = Jwts.parser()
+                    .verifyWith(clave)
                     .build()
                     .parseClaimsJws(token)
-                    .getBody();
+                    .getPayload();   // CAMBIO: antes era .getBody()
 
-            // Extraer datos del usuario desde el payload del token
-            String email     = claims.getSubject();
-            String rol       = (String) claims.get("rol");
-            Long   idUsuario = ((Number) claims.get("idUsuario")).longValue();
+            String email = claims.getSubject();
+            String rol   = (String) claims.get("rol");
 
-            // Guardar el idUsuario como atributo del request
-            // El controlador lo lee con @RequestHeader("X-Usuario-Id")
+            // CAMBIO CRÍTICO: el claim se llama "id", no "idUsuario"
+            // En ms-login se guarda así: .claim("id", guardado.getId())
+            Long idUsuario = ((Number) claims.get("id")).longValue();
+
+            // Guardar el id en el request para que el controlador lo use
+            // El controlador lo lee con @RequestAttribute("X-Usuario-Id")
             peticion.setAttribute("X-Usuario-Id", idUsuario);
 
-            // Registrar la autenticacion en Spring Security
-            UsernamePasswordAuthenticationToken autenticacion = new UsernamePasswordAuthenticationToken(
-                    email,
-                    null,
-                    List.of(new SimpleGrantedAuthority("ROLE_" + rol))
-            );
+            // Registrar la autenticacion en Spring Security con el rol del usuario
+            UsernamePasswordAuthenticationToken autenticacion =
+                    new UsernamePasswordAuthenticationToken(
+                            email,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + rol))
+                    );
             SecurityContextHolder.getContext().setAuthentication(autenticacion);
 
         } catch (JwtException | IllegalArgumentException e) {
-            // Token invalido o expirado
+            // Token invalido, expirado o mal formado → Spring Security rechazara el request
             System.out.println("Token JWT invalido en ms-tiendas: " + e.getMessage());
         }
 
         cadenaFiltros.doFilter(peticion, respuesta);
     }
-
 }
