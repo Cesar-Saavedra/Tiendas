@@ -25,7 +25,7 @@ public class ConfiguracionSeguridad {
             .sessionManagement(sesion ->
                 sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ¡AQUÍ ESTÁ LA MAGIA! Permitimos que cualquiera consulte (GET) las tiendas
+                // Permitimos que cualquiera consulte (GET) las tiendas
                 .requestMatchers(HttpMethod.GET, "/api/tiendas/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/tiendas/*/resumen").permitAll()
                 
