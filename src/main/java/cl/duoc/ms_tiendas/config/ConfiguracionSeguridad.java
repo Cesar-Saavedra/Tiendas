@@ -27,6 +27,7 @@ public class ConfiguracionSeguridad {
             .authorizeHttpRequests(auth -> auth
                 // ¡AQUÍ ESTÁ LA MAGIA! Permitimos que cualquiera consulte (GET) las tiendas
                 .requestMatchers(HttpMethod.GET, "/api/tiendas/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/tiendas/*/resumen").permitAll()
                 
                 // Todos los demas endpoints requieren token JWT valido
                 .anyRequest().authenticated()
