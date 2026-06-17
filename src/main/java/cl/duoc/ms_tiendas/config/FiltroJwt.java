@@ -1,16 +1,5 @@
 package cl.duoc.ms_tiendas.config;
 
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -56,23 +45,22 @@ public class FiltroJwt extends OncePerRequestFilter {
         String token = headerAutorizacion.substring(7);
 
         try {
-            // CAMBIO: API de jjwt 0.12.x
-            // Antes (0.11.x): Jwts.parserBuilder().setSigningKey(clave).build()
-            // Ahora (0.12.x): Jwts.parser().verifyWith(clave).build()
+            // API de jjwt 0.12.x: Jwts.parser().verifyWith(clave).build()
             SecretKey clave = Keys.hmacShaKeyFor(secreto.getBytes());
 
             Claims claims = Jwts.parser()
                     .verifyWith(clave)
                     .build()
                     .parseClaimsJws(token)
-                    .getPayload();   // CAMBIO: antes era .getBody()
+                    .getPayload();
 
             String email = claims.getSubject();
             String rol   = (String) claims.get("rol");
 
-            // CAMBIO CRÍTICO: el claim se llama "id", no "idUsuario"
-            // En ms-login se guarda así: .claim("id", guardado.getId())
-            Long idUsuario = ((Number) claims.get("id")).longValue();
+            // Unificado a Integer: el claim "id" se genera como Integer en ms-login
+            // y asi se lee en todos los demas microservicios (ms-usuarios, ms-grupos,
+            // ms-inventario, ms-eventos, ms-localizacion, ms-intercambio)
+            Integer idUsuario = claims.get("id", Integer.class);
 
             // Guardar el id en el request para que el controlador lo use
             // El controlador lo lee con @RequestAttribute("X-Usuario-Id")

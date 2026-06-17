@@ -24,7 +24,7 @@ public class InventarioCliente {
     // ----------------------------------------------------------------
     // Consulta el resumen de inventario de una tienda
     // ----------------------------------------------------------------
-    public InventarioResumenDTO obtenerResumenDeTienda(Long idTienda, String tokenJwt) {
+    public InventarioResumenDTO obtenerResumenDeTienda(Integer idTienda, String tokenJwt) {
         try {
             // Endpoint que ms-inventario expone para dar el resumen de una tienda
             String url = urlMsInventario + "/api/inventario/resumen/tienda/" + idTienda;

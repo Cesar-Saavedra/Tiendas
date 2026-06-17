@@ -30,7 +30,7 @@ public class LoginCliente {
     // Consulta los datos de un usuario en ms-login por su ID
     // Recibe el token JWT para que ms-login sepa que somos un MS autorizado
     // ----------------------------------------------------------------
-    public UsuarioDTO obtenerUsuarioPorId(Long idUsuario, String tokenJwt) {
+    public UsuarioDTO obtenerUsuarioPorId(Integer idUsuario, String tokenJwt) {
         try {
             // Construir la URL completa del endpoint de ms-login
             String url = urlMsLogin + "/api/usuarios/" + idUsuario;

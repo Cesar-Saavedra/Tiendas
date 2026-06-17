@@ -51,7 +51,8 @@ public class Tienda {
 
     // ID del usuario dueno de la tienda (viene de ms-login)
     // No es una FK real porque esta en otro microservicio y otra BD
+    // Unificado a Integer para coincidir con Usuario.id en ms-login y el resto del ecosistema
     @Column(nullable = false)
-    private Long idUsuarioDueno; //Long aguanta mas que int o long
+    private Integer idUsuarioDueno;
 
 }

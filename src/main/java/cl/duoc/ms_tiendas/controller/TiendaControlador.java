@@ -57,7 +57,7 @@ public class TiendaControlador {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TiendaResponse> obtenerTienda(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @RequestHeader("Authorization") String tokenJwt) {
 
         TiendaResponse tienda = tiendaServicio.obtenerPorId(id, tokenJwt);
@@ -85,7 +85,7 @@ public class TiendaControlador {
     public ResponseEntity<TiendaResponse> crearTienda(
             @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
-            @RequestAttribute("X-Usuario-Id") Long idUsuarioDueno) {
+            @RequestAttribute("X-Usuario-Id") Integer idUsuarioDueno) {
 
         TiendaResponse tiendaCreada = tiendaServicio.crearTienda(solicitud, idUsuarioDueno, tokenJwt);
         // 201 Created en lugar de 200 OK porque estamos creando un recurso nuevo
@@ -101,10 +101,10 @@ public class TiendaControlador {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TiendaResponse> actualizarTienda(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
-            @RequestAttribute("X-Usuario-Id") Long idUsuarioDueno) {
+            @RequestAttribute("X-Usuario-Id") Integer idUsuarioDueno) {
 
         TiendaResponse tiendaActualizada = tiendaServicio.actualizarTienda(id, solicitud, idUsuarioDueno, tokenJwt);
         return ResponseEntity.ok(tiendaActualizada);
@@ -129,7 +129,7 @@ public class TiendaControlador {
      * }
      */
     @GetMapping("/{id}/resumen")
-    public ResponseEntity<TiendaResumenDTO> obtenerResumen(@PathVariable Long id) {
+    public ResponseEntity<TiendaResumenDTO> obtenerResumen(@PathVariable Integer id) {
         TiendaResumenDTO resumen = tiendaServicio.obtenerResumenParaOtrosMs(id);
         return ResponseEntity.ok(resumen);
     }
@@ -143,7 +143,7 @@ public class TiendaControlador {
      * Body: vacio
      */
     @PutMapping("/{id}/sumar-evento")
-    public ResponseEntity<Void> sumarEvento(@PathVariable Long id) {
+    public ResponseEntity<Void> sumarEvento(@PathVariable Integer id) {
         tiendaServicio.incrementarTotalEventos(id);
         // 204 No Content: operacion exitosa pero sin cuerpo de respuesta
         return ResponseEntity.noContent().build();
@@ -158,12 +158,11 @@ public class TiendaControlador {
      */
     @GetMapping("/{id}/metricas")
     public ResponseEntity<MetricaResponse> obtenerMetricas(
-            @PathVariable Long id,
-            @RequestAttribute("X-Usuario-Id") Long idUsuarioDueno) {
+            @PathVariable Integer id,
+            @RequestAttribute("X-Usuario-Id") Integer idUsuarioDueno) {
 
         MetricaResponse metricas = tiendaServicio.obtenerMetricas(id, idUsuarioDueno);
         return ResponseEntity.ok(metricas);
     }
-
 
 }

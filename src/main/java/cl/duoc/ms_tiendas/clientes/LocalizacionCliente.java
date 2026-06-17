@@ -24,7 +24,7 @@ public class LocalizacionCliente {
     // ----------------------------------------------------------------
     // Consulta la localizacion de una tienda por su ID
     // ----------------------------------------------------------------
-    public LocalizacionDTO obtenerLocalizacionDeTienda(Long idTienda, String tokenJwt) {
+    public LocalizacionDTO obtenerLocalizacionDeTienda(Integer idTienda, String tokenJwt) {
         try {
             // Armar la URL con el ID de la tienda
             String url = urlMsLocalizacion + "/api/localizacion/tienda/" + idTienda;

@@ -36,8 +36,8 @@ public class TiendaServicio {
     // Crea una nueva tienda para un usuario autenticado
     // El idUsuarioDueno viene del token JWT, no del body del formulario
     // ----------------------------------------------------------------
-    
-    public TiendaResponse crearTienda(TiendaRequest solicitud, Long idUsuarioDueno, String tokenJwt) {
+
+    public TiendaResponse crearTienda(TiendaRequest solicitud, Integer idUsuarioDueno, String tokenJwt) {
 
         // Verificar que el usuario no tenga ya una tienda con el mismo nombre
         Optional<Tienda> tiendaExistente = tiendaRepositorio.findByNombreAndIdUsuarioDueno(
@@ -99,12 +99,12 @@ public class TiendaServicio {
     // Obtiene el perfil completo de una tienda por su ID
     // Tambien suma una visita a las metricas
     // ----------------------------------------------------------------
-    public TiendaResponse obtenerPorId(Long idTienda, String tokenJwt) {
+    public TiendaResponse obtenerPorId(Integer idTienda, String tokenJwt) {
 
         // Buscar la tienda, lanzar error si no existe
         Tienda tienda = tiendaRepositorio.findById(idTienda)
             .orElseThrow(() -> new RuntimeException("No se encontro la tienda con id: " + idTienda));
-        
+
         // Registrar una visita en las metricas de esta tienda
         registrarVisita(tienda);
 
@@ -117,7 +117,7 @@ public class TiendaServicio {
     // ----------------------------------------------------------------
     // Actualiza los datos de una tienda (solo el dueno puede hacerlo)
     // ----------------------------------------------------------------
-    public TiendaResponse actualizarTienda(Long idTienda, TiendaRequest solicitud, Long idUsuarioDueno, String tokenJwt) {
+    public TiendaResponse actualizarTienda(Integer idTienda, TiendaRequest solicitud, Integer idUsuarioDueno, String tokenJwt) {
 
         // Buscar la tienda en la BD
         Tienda tienda = tiendaRepositorio.findById(idTienda)
@@ -148,7 +148,7 @@ public class TiendaServicio {
     // Endpoint para otros microservicios: devuelve resumen de una tienda
     // Lo usan: ms-inventario, ms-localizacion, ms-eventos
     // ----------------------------------------------------------------
-    public TiendaResumenDTO obtenerResumenParaOtrosMs(Long idTienda) {
+    public TiendaResumenDTO obtenerResumenParaOtrosMs(Integer idTienda) {
 
         // Buscar la tienda en la BD
         Tienda tienda = tiendaRepositorio.findById(idTienda)
@@ -168,7 +168,7 @@ public class TiendaServicio {
     // Incrementa el contador de eventos cuando ms-eventos crea uno nuevo
     // ms-eventos llama a este endpoint cuando una tienda crea un torneo
     // ----------------------------------------------------------------
-    public void incrementarTotalEventos(Long idTienda) {
+    public void incrementarTotalEventos(Integer idTienda) {
 
         // Buscar la tienda
         Tienda tienda = tiendaRepositorio.findById(idTienda)
@@ -186,7 +186,7 @@ public class TiendaServicio {
     // ----------------------------------------------------------------
     // Devuelve las metricas de una tienda (solo para el dueno)
     // ----------------------------------------------------------------
-    public MetricaResponse obtenerMetricas(Long idTienda, Long idUsuarioDueno) {
+    public MetricaResponse obtenerMetricas(Integer idTienda, Integer idUsuarioDueno) {
 
         // Buscar la tienda y verificar que el usuario sea el dueno
         Tienda tienda = tiendaRepositorio.findById(idTienda)

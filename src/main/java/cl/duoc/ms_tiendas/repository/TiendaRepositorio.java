@@ -10,14 +10,12 @@ import cl.duoc.ms_tiendas.model.Tienda;
 
 // Repositorio que maneja las consultas a la tabla "tiendas"
 // JpaRepository nos da gratis: save, findById, findAll, delete, etc.
-public interface TiendaRepositorio extends JpaRepository<Tienda, Long> {
+public interface TiendaRepositorio extends JpaRepository<Tienda, Integer> {
 
-    List<Tienda> findByIdUsuarioDueno(Long idUsuarioDueno);
-
+    List<Tienda> findByIdUsuarioDueno(Integer idUsuarioDueno);
 
     List<Tienda> findByEstado(EstadoTienda estado);
 
-
-    Optional<Tienda> findByNombreAndIdUsuarioDueno(String nombre, Long idUsuarioDueno);
+    Optional<Tienda> findByNombreAndIdUsuarioDueno(String nombre, Integer idUsuarioDueno);
 
 }

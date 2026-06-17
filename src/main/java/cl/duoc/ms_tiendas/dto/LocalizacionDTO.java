@@ -13,7 +13,7 @@ public class LocalizacionDTO {
     private Integer id;
 
     // ID de la tienda a la que pertenece esta localizacion
-    private Long idTienda;
+    private Integer idTienda;
 
     // Direccion en texto legible para mostrar en la UI
     private String direccionCompleta;
