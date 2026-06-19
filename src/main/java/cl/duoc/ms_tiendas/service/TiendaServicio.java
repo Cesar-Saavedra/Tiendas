@@ -145,6 +145,27 @@ public class TiendaServicio {
     }
 
     // ----------------------------------------------------------------
+    // Endpoint para otros microservicios: devuelve las tiendas que pertenecen
+    // a un usuario (por su id en ms-login). Lo usa ms-eventos para verificar
+    // si la tienda organizadora de un evento es realmente del usuario autenticado,
+    // ya que el id de la tienda es distinto del id del usuario dueno.
+    // ----------------------------------------------------------------
+    public List<TiendaResumenDTO> obtenerResumenesPorDueno(Integer idUsuarioDueno) {
+        List<Tienda> tiendas = tiendaRepositorio.findByIdUsuarioDueno(idUsuarioDueno);
+
+        List<TiendaResumenDTO> resumenes = new ArrayList<>();
+        for (Tienda tienda : tiendas) {
+            resumenes.add(new TiendaResumenDTO(
+                    tienda.getId(),
+                    tienda.getNombre(),
+                    tienda.getHorarioAtencion(),
+                    tienda.getEstado().name()
+            ));
+        }
+        return resumenes;
+    }
+
+    // ----------------------------------------------------------------
     // Endpoint para otros microservicios: devuelve resumen de una tienda
     // Lo usan: ms-inventario, ms-localizacion, ms-eventos
     // ----------------------------------------------------------------

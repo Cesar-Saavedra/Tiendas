@@ -19,6 +19,7 @@ import cl.duoc.ms_tiendas.dto.TiendaRequest;
 import cl.duoc.ms_tiendas.dto.TiendaResponse;
 import cl.duoc.ms_tiendas.dto.TiendaResumenDTO;
 import cl.duoc.ms_tiendas.service.TiendaServicio;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -83,7 +84,7 @@ public class TiendaControlador {
      */
     @PostMapping
     public ResponseEntity<TiendaResponse> crearTienda(
-            @RequestBody TiendaRequest solicitud,
+            @Valid @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
             @RequestAttribute("X-Usuario-Id") Integer idUsuarioDueno) {
 
@@ -102,7 +103,7 @@ public class TiendaControlador {
     @PutMapping("/{id}")
     public ResponseEntity<TiendaResponse> actualizarTienda(
             @PathVariable Integer id,
-            @RequestBody TiendaRequest solicitud,
+            @Valid @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
             @RequestAttribute("X-Usuario-Id") Integer idUsuarioDueno) {
 
@@ -132,6 +133,19 @@ public class TiendaControlador {
     public ResponseEntity<TiendaResumenDTO> obtenerResumen(@PathVariable Integer id) {
         TiendaResumenDTO resumen = tiendaServicio.obtenerResumenParaOtrosMs(id);
         return ResponseEntity.ok(resumen);
+    }
+
+    /*
+     * GET /api/tiendas/dueno/{usuarioId}
+     * Devuelve las tiendas que pertenecen a un usuario (id de ms-login).
+     * Lo usa ms-eventos para verificar si la tienda organizadora de un
+     * evento es realmente del usuario autenticado: el id de la tienda
+     * NO es el mismo que el id del usuario dueno.
+     */
+    @GetMapping("/dueno/{usuarioId}")
+    public ResponseEntity<List<TiendaResumenDTO>> obtenerTiendasPorDueno(@PathVariable Integer usuarioId) {
+        List<TiendaResumenDTO> tiendas = tiendaServicio.obtenerResumenesPorDueno(usuarioId);
+        return ResponseEntity.ok(tiendas);
     }
 
     /*
