@@ -18,17 +18,17 @@ import cl.duoc.ms_tiendas.dto.MetricaResponse;
 import cl.duoc.ms_tiendas.dto.TiendaRequest;
 import cl.duoc.ms_tiendas.dto.TiendaResponse;
 import cl.duoc.ms_tiendas.dto.TiendaResumenDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import cl.duoc.ms_tiendas.service.TiendaServicio;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/tiendas")
-@RequiredArgsConstructor
 public class TiendaControlador {
 
     // El controlador solo conoce al servicio, nunca al repositorio directamente
-    private final TiendaServicio tiendaServicio;
+    @Autowired
+    private TiendaServicio tiendaServicio;
 
     // ================================================================
     // ENDPOINTS PUBLICOS (cualquier usuario autenticado puede usarlos)

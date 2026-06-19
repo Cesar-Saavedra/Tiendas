@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cl.duoc.ms_tiendas.clientes.LoginCliente;
@@ -17,20 +18,21 @@ import cl.duoc.ms_tiendas.model.MetricaTienda;
 import cl.duoc.ms_tiendas.model.Tienda;
 import cl.duoc.ms_tiendas.repository.MetricaTiendaRepositorio;
 import cl.duoc.ms_tiendas.repository.TiendaRepositorio;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class TiendaServicio {
 
     // Repositorio para acceder a la tabla de tiendas
-    private final TiendaRepositorio tiendaRepositorio;
+    @Autowired
+    private TiendaRepositorio tiendaRepositorio;
 
     // Repositorio para acceder a la tabla de metricas
-    private final MetricaTiendaRepositorio metricaRepositorio;
+    @Autowired
+    private MetricaTiendaRepositorio metricaRepositorio;
 
     // Cliente HTTP para consultar datos de usuarios en ms-login
-    private final LoginCliente loginCliente;
+    @Autowired
+    private LoginCliente loginCliente;
 
     // ----------------------------------------------------------------
     // Crea una nueva tienda para un usuario autenticado
