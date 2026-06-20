@@ -28,7 +28,13 @@ public class ConfiguracionSeguridad {
                 // Permitimos que cualquiera consulte (GET) las tiendas
                 .requestMatchers(HttpMethod.GET, "/api/tiendas/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/tiendas/*/resumen").permitAll()
-                
+
+                // Solo los usuarios con rol TIENDA pueden crear una tienda
+                .requestMatchers(HttpMethod.POST, "/api/tiendas").hasRole("TIENDA")
+
+                // Endpoint interno: solo lo debe invocar ms-eventos en nombre de una tienda
+                .requestMatchers(HttpMethod.PUT, "/api/tiendas/*/sumar-evento").hasRole("TIENDA")
+
                 // Todos los demas endpoints requieren token JWT valido
                 .anyRequest().authenticated()
             )
