@@ -1,54 +1,31 @@
 package cl.duoc.ms_tiendas.clientes;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import cl.duoc.ms_tiendas.dto.LocalizacionDTO;
-import lombok.RequiredArgsConstructor;
 
-@Component
-@RequiredArgsConstructor
-public class LocalizacionCliente {
+/*
+ * Cliente Feign para comunicarse con ms-localizacion.
+ *
+ * name = "ms-localizacion" → Feign resuelve el host via Eureka,
+ * sin URLs hardcodeadas en el yaml.
+ */
+@FeignClient(name = "ms-localizacion")
+public interface LocalizacionCliente {
 
-    private final RestTemplate restTemplate;
-
-    // URL base de ms-localizacion, configurada en application.properties
-    @Value("${ms-localizacion.url}")
-    private String urlMsLocalizacion;
-
-    // ----------------------------------------------------------------
-    // Consulta la localizacion de una tienda por su ID
-    // ----------------------------------------------------------------
-    public LocalizacionDTO obtenerLocalizacionDeTienda(Integer idTienda, String tokenJwt) {
-        try {
-            // Armar la URL con el ID de la tienda
-            String url = urlMsLocalizacion + "/api/localizacion/tienda/" + idTienda;
-
-            // Preparar el header de autorizacion con el JWT
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", tokenJwt);
-
-            HttpEntity<Void> peticion = new HttpEntity<>(headers);
-
-            // Hacer la llamada al otro microservicio
-            ResponseEntity<LocalizacionDTO> respuesta = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    peticion,
-                    LocalizacionDTO.class
-            );
-
-            return respuesta.getBody();
-
-        } catch (Exception e) {
-            // Si ms-localizacion no responde, continuar sin la direccion
-            System.out.println("Error al consultar ms-localizacion: " + e.getMessage());
-            return null;
-        }
-    }
+    /*
+     * GET /api/localizacion/tienda/{id}
+     * Devuelve la localizacion (direccion y coordenadas) de una tienda.
+     *
+     * @param idTienda  id de la tienda
+     * @param tokenJwt  header "Bearer eyJ..." para autorizacion
+     */
+    @GetMapping("/api/localizacion/tienda/{id}")
+    LocalizacionDTO obtenerLocalizacionDeTienda(
+            @PathVariable("id") Integer idTienda,
+            @RequestHeader("Authorization") String tokenJwt
+    );
 }

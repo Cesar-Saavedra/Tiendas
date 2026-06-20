@@ -20,10 +20,13 @@ import cl.duoc.ms_tiendas.dto.TiendaResponse;
 import cl.duoc.ms_tiendas.dto.TiendaResumenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import cl.duoc.ms_tiendas.service.TiendaServicio;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/tiendas")
+@Tag(name = "Tiendas", description = "Gestión de tiendas de TCG")
 public class TiendaControlador {
 
     // El controlador solo conoce al servicio, nunca al repositorio directamente
@@ -43,6 +46,7 @@ public class TiendaControlador {
      * Respuesta exitosa (200): lista de TiendaResponse
      */
     @GetMapping
+    @Operation(summary = "Listar tiendas activas", description = "Devuelve todas las tiendas con estado ACTIVA.")
     public ResponseEntity<List<TiendaResponse>> listarTiendas(
             @RequestHeader("Authorization") String tokenJwt) {
 
@@ -57,6 +61,7 @@ public class TiendaControlador {
      * Ejemplo: GET /api/tiendas/1
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Ver tienda por ID", description = "Obtiene el perfil completo de una tienda y suma una visita a sus métricas.")
     public ResponseEntity<TiendaResponse> obtenerTienda(
             @PathVariable Integer id,
             @RequestHeader("Authorization") String tokenJwt) {
@@ -83,6 +88,7 @@ public class TiendaControlador {
      * }
      */
     @PostMapping
+    @Operation(summary = "Crear tienda", description = "Crea una nueva tienda para el usuario autenticado (rol TIENDA requerido).")
     public ResponseEntity<TiendaResponse> crearTienda(
             @Valid @RequestBody TiendaRequest solicitud,
             @RequestHeader("Authorization") String tokenJwt,
@@ -101,6 +107,7 @@ public class TiendaControlador {
      * Body JSON: mismos campos que el POST
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar tienda", description = "Actualiza los datos de la tienda. Solo el dueño puede hacerlo.")
     public ResponseEntity<TiendaResponse> actualizarTienda(
             @PathVariable Integer id,
             @Valid @RequestBody TiendaRequest solicitud,
@@ -130,6 +137,7 @@ public class TiendaControlador {
      * }
      */
     @GetMapping("/{id}/resumen")
+    @Operation(summary = "Resumen de tienda (interno)", description = "Devuelve datos básicos de la tienda. Usado por ms-inventario, ms-localizacion y ms-eventos via Feign.")
     public ResponseEntity<TiendaResumenDTO> obtenerResumen(@PathVariable Integer id) {
         TiendaResumenDTO resumen = tiendaServicio.obtenerResumenParaOtrosMs(id);
         return ResponseEntity.ok(resumen);
@@ -143,6 +151,7 @@ public class TiendaControlador {
      * NO es el mismo que el id del usuario dueno.
      */
     @GetMapping("/dueno/{usuarioId}")
+    @Operation(summary = "Tiendas por dueño (interno)", description = "Devuelve las tiendas que pertenecen a un usuario. Usado por ms-eventos via Feign.")
     public ResponseEntity<List<TiendaResumenDTO>> obtenerTiendasPorDueno(@PathVariable Integer usuarioId) {
         List<TiendaResumenDTO> tiendas = tiendaServicio.obtenerResumenesPorDueno(usuarioId);
         return ResponseEntity.ok(tiendas);
@@ -157,6 +166,7 @@ public class TiendaControlador {
      * Body: vacio
      */
     @PutMapping("/{id}/sumar-evento")
+    @Operation(summary = "Sumar evento a tienda (interno)", description = "Incrementa el contador de eventos de la tienda. Llamado por ms-eventos via Feign.")
     public ResponseEntity<Void> sumarEvento(@PathVariable Integer id) {
         tiendaServicio.incrementarTotalEventos(id);
         // 204 No Content: operacion exitosa pero sin cuerpo de respuesta
@@ -171,6 +181,7 @@ public class TiendaControlador {
      * Header: X-Usuario-Id: 5  ← id del usuario autenticado
      */
     @GetMapping("/{id}/metricas")
+    @Operation(summary = "Métricas de tienda", description = "Dashboard de métricas de la tienda. Solo el dueño puede consultarlo.")
     public ResponseEntity<MetricaResponse> obtenerMetricas(
             @PathVariable Integer id,
             @RequestAttribute("X-Usuario-Id") Integer idUsuarioDueno) {

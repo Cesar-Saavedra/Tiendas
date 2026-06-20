@@ -1,53 +1,31 @@
 package cl.duoc.ms_tiendas.clientes;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import cl.duoc.ms_tiendas.dto.InventarioResumenDTO;
-import lombok.RequiredArgsConstructor;
-@Component
-@RequiredArgsConstructor
-public class InventarioCliente {
 
-    
-    private final RestTemplate restTemplate;
+/*
+ * Cliente Feign para comunicarse con ms-inventario.
+ *
+ * name = "ms-inventario" → Feign resuelve el host via Eureka,
+ * sin URLs hardcodeadas en el yaml.
+ */
+@FeignClient(name = "ms-inventario")
+public interface InventarioCliente {
 
-    // URL base de ms-inventario, configurada en application.properties
-    @Value("${ms-inventario.url}")
-    private String urlMsInventario;
-
-    // ----------------------------------------------------------------
-    // Consulta el resumen de inventario de una tienda
-    // ----------------------------------------------------------------
-    public InventarioResumenDTO obtenerResumenDeTienda(Integer idTienda, String tokenJwt) {
-        try {
-            // Endpoint que ms-inventario expone para dar el resumen de una tienda
-            String url = urlMsInventario + "/api/inventario/resumen/tienda/" + idTienda;
-
-            // Preparar la peticion con el token JWT
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", tokenJwt);
-
-            HttpEntity<Void> peticion = new HttpEntity<>(headers);
-
-            ResponseEntity<InventarioResumenDTO> respuesta = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    peticion,
-                    InventarioResumenDTO.class
-            );
-
-            return respuesta.getBody();
-
-        } catch (Exception e) {
-            // Si ms-inventario no responde, retornar null y manejarlo en el servicio
-            System.out.println("Error al consultar ms-inventario: " + e.getMessage());
-            return null;
-        }
-    }
+    /*
+     * GET /api/inventario/resumen/tienda/{id}
+     * Devuelve el resumen de inventario de una tienda (total productos, categorias).
+     *
+     * @param idTienda  id de la tienda
+     * @param tokenJwt  header "Bearer eyJ..." para autorizacion
+     */
+    @GetMapping("/api/inventario/resumen/tienda/{id}")
+    InventarioResumenDTO obtenerResumenDeTienda(
+            @PathVariable("id") Integer idTienda,
+            @RequestHeader("Authorization") String tokenJwt
+    );
 }

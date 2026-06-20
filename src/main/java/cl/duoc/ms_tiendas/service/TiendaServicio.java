@@ -72,7 +72,7 @@ public class TiendaServicio {
 
         // Consultar el nombre del dueño en ms-login para enriquecer la respuesta
         // Si ms-login no responde, igual devolvemos la tienda sin el nombre del dueño
-        UsuarioDTO dueno = loginCliente.obtenerUsuarioPorId(idUsuarioDueno, tokenJwt);
+        UsuarioDTO dueno = consultarUsuario(idUsuarioDueno, tokenJwt);
 
         return convertirARespuesta(tiendaGuardada, dueno);
     }
@@ -90,7 +90,7 @@ public class TiendaServicio {
         for (Tienda tienda : tiendasActivas) {
 
             // Consultar el nombre del dueno en ms-login
-            UsuarioDTO dueno = loginCliente.obtenerUsuarioPorId(tienda.getIdUsuarioDueno(), tokenJwt);
+            UsuarioDTO dueno = consultarUsuario(tienda.getIdUsuarioDueno(), tokenJwt);
             listaRespuesta.add(convertirARespuesta(tienda, dueno));
         }
 
@@ -111,7 +111,7 @@ public class TiendaServicio {
         registrarVisita(tienda);
 
         // Consultar nombre del dueno en ms-login
-        UsuarioDTO dueno = loginCliente.obtenerUsuarioPorId(tienda.getIdUsuarioDueno(), tokenJwt);
+        UsuarioDTO dueno = consultarUsuario(tienda.getIdUsuarioDueno(), tokenJwt);
 
         return convertirARespuesta(tienda, dueno);
     }
@@ -141,7 +141,7 @@ public class TiendaServicio {
         Tienda tiendaActualizada = tiendaRepositorio.save(tienda);
 
         // Consultar nombre del dueno en ms-login
-        UsuarioDTO dueno = loginCliente.obtenerUsuarioPorId(idUsuarioDueno, tokenJwt);
+        UsuarioDTO dueno = consultarUsuario(idUsuarioDueno, tokenJwt);
 
         return convertirARespuesta(tiendaActualizada, dueno);
     }
@@ -244,6 +244,18 @@ public class TiendaServicio {
         if (metricas.isPresent()) {
             metricas.get().setTotalVisitas(metricas.get().getTotalVisitas() + 1);
             metricaRepositorio.save(metricas.get());
+        }
+    }
+
+    // Consulta los datos de un usuario en ms-login via Feign.
+    // Retorna null si ms-login no responde, para no interrumpir el flujo principal.
+    private UsuarioDTO consultarUsuario(Integer idUsuario, String tokenJwt) {
+        try {
+            return loginCliente.obtenerUsuarioPorId(idUsuario, tokenJwt);
+        } catch (Exception e) {
+            System.out.println("[ms-tiendas] No se pudo consultar ms-login para usuario "
+                    + idUsuario + ": " + e.getMessage());
+            return null;
         }
     }
 
